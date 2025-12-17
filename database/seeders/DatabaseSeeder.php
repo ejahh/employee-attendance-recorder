@@ -13,11 +13,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Call the UserSeeder, AdminSeeder, and EmployeeSeeder to safely seed users and employees from JSON data
+        $this->call([
+            UserSeeder::class,
+            AdminSeeder::class,
+            EmployeeSeeder::class,
         ]);
+        
+        // Keep existing factory creation but make it safe too
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'first_name' => 'Test',
+                'middle_name' => '',
+                'last_name' => 'User',
+                'user_name' => 'testuser',
+                'password' => bcrypt('password'),
+                'phone_number' => '1234567890',
+                'profile_photo' => null,
+                'user_type' => 'user',
+            ]
+        );
     }
 }
