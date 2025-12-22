@@ -20,4 +20,9 @@ Route::middleware('auth')->group(function () {
     })->name('employees');
 });
 
+Route::get('/debug-ages', function() {
+    return DB::select('SELECT age FROM employees ORDER BY age ASC');
+});
+
 require __DIR__.'/auth.php';
+

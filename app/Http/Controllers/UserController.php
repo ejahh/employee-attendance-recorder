@@ -29,7 +29,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
             'phone_number' => 'required',
-            'profile_photo' => 'nullable',
+            'profile_photo' => 'nullable|file|image|max:2048',
             'user_type' => 'nullable',
         ]);
 
@@ -42,6 +42,12 @@ class UserController extends Controller
 
         $validated = $validator->validated();
         $validated['password'] = bcrypt($validated['password']);
+
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+            $validated['profile_photo'] = $path;
+        }
+
         $user = User::create($validated);
 
         return response()->json([
@@ -95,7 +101,7 @@ class UserController extends Controller
             'email' => 'sometimes|required|email|unique:users,email,' . $id,
             'password' => 'sometimes|nullable|min:8',
             'phone_number' => 'nullable',
-            'profile_photo' => 'nullable',
+            'profile_photo' => 'nullable|file|image|max:2048',
             'user_type' => 'sometimes|required',
         ]);
 
@@ -110,6 +116,12 @@ class UserController extends Controller
         if (isset($validated['password'])) {
             $validated['password'] = bcrypt($validated['password']);
         }
+
+        if ($request->hasFile('profile_photo')) {
+            $path = $request->file('profile_photo')->store('profile_photos', 'public');
+            $validated['profile_photo'] = $path;
+        }
+
         $user->update($validated);
         return response()->json([
             'message' => 'User updated successfully',
